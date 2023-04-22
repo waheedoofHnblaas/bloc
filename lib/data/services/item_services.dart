@@ -9,13 +9,13 @@ class ItemServices {
     BaseOptions options = BaseOptions(
       baseUrl: AppLinks.host,
       sendTimeout: const Duration(
-        seconds: 8,
+        seconds: 11,
       ),
       connectTimeout: const Duration(
-        seconds: 8,
+        seconds: 11,
       ),
       receiveTimeout: const Duration(
-        seconds: 8,
+        seconds: 11,
       ),
     );
     dio = Dio(options);

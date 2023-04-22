@@ -61,13 +61,15 @@ class ItemCardWidget extends StatelessWidget {
                         ),
                       ),
                     ),
-                    Container(
+                    SizedBox(
                       width: Get.width / 10,
                       height: Get.width / 10,
                       child: IconButton(
                         onPressed: () {
                           context.read<CardCubit>().addItem(itemModel);
                           Get.showSnackbar(const GetSnackBar(
+                            snackPosition: SnackPosition.TOP,
+
                             backgroundColor: AppColors.myRed,
                             message: 'Add Item',
                             duration: Duration(seconds: 1),
@@ -87,11 +89,3 @@ class ItemCardWidget extends StatelessWidget {
     );
   }
 }
-// ListTile(
-// leading: AppCachImage(imageUrl: itemModel.urls!.regular.toString()),
-// title: Text(itemModel.user.username.toString()),
-// subtitle: Text(
-// itemModel.description ?? '',
-// style: const TextStyle(color: AppColors.myRed),
-// ),
-// ),

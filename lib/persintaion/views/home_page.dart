@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import '../../core/routs.dart';
 import '../../data/model/ItemModel.dart';
+import '../widgets/checkInternet.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -137,7 +138,7 @@ class _HomePageState extends State<HomePage> {
               ? const Text('No Data Yet')
               : const Padding(
                   padding: EdgeInsets.all(8.0),
-                  child: LinearProgressIndicator(),
+                  child: CircularProgressIndicator(),
                 )
         ],
       ),
@@ -160,7 +161,7 @@ class _HomePageState extends State<HomePage> {
             itemModel: isSearching ? searchedItems[index] : allItems[index],
           );
         } else {
-          return const LinearProgressIndicator();
+          return const CircularProgressIndicator();
         }
       },
     );
@@ -206,7 +207,15 @@ class _HomePageState extends State<HomePage> {
         title: isSearching ? buildSearchTextField() : buildAppBarTitle(),
         actions: buildAppBarActions(),
       ),
-      body: Center(child: buildItemsList()),
+      body: Center(
+        child: Stack(
+          children: [
+            buildItemsList(),
+            const CheckInternetWidget()
+          ],
+        ),
+      ),
     );
   }
 }
+

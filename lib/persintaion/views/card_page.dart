@@ -2,6 +2,7 @@ import 'package:bloc_app/besniees_logic/cubit/card/card_cubit.dart';
 import 'package:bloc_app/besniees_logic/cubit/card/card_cubit.dart';
 import 'package:bloc_app/core/colors.dart';
 import 'package:bloc_app/data/model/ItemModel.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -31,7 +32,7 @@ class CardPage extends StatelessWidget {
                         reverse: true,
                         itemCount: state.items.length,
                         itemBuilder: (context, index) {
-                          List<ItemModel> itemsModel =
+                          List<ItemModel> itemsModelsList =
                               state.items.keys.toList();
                           int count = state.items.values.toList()[index];
                           return Column(
@@ -39,10 +40,10 @@ class CardPage extends StatelessWidget {
                               InkWell(
                                 onTap: () {
                                   BlocProvider.of<CardCubit>(context)
-                                      .removeItem(itemsModel[index]);
+                                      .removeItem(itemsModelsList[index]);
                                 },
                                 child: Container(
-                                  color: AppColors.myWhite,
+                                  color: AppColors.myTextColor,
                                   child: Padding(
                                     padding: EdgeInsets.symmetric(
                                       horizontal:
@@ -56,12 +57,22 @@ class CardPage extends StatelessWidget {
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
+                                        CircleAvatar(
+                                          backgroundImage:
+                                              CachedNetworkImageProvider(
+                                            itemsModelsList[index]
+                                                .urls!
+                                                .thumb
+                                                .toString(),
+                                          ),
+                                        radius: 30,
+                                        ),
                                         SizedBox(
                                           width: MediaQuery.of(context)
                                                   .size
                                                   .width /
                                               2,
-                                          child: Text(itemsModel[index]
+                                          child: Text(itemsModelsList[index]
                                               .user
                                               .name
                                               .toString()),
@@ -72,8 +83,8 @@ class CardPage extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                              Divider(
-                                thickness: 0,
+                              const Divider(
+                                thickness: 1,
                               )
                             ],
                           );

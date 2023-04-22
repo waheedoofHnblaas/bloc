@@ -8,7 +8,7 @@ part 'items_state.dart';
 
 class ItemsCubit extends Cubit<ItemsState> {
   final ItemRepo itemRepo;
-  late List<ItemModel> items;
+  late List<ItemModel> items=[];
 
   ItemsCubit(this.itemRepo) : super(ItemsInitial());
 
