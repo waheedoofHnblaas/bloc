@@ -9,40 +9,38 @@ class ItemServices {
     BaseOptions options = BaseOptions(
       baseUrl: AppLinks.host,
       sendTimeout: const Duration(
-        seconds: 11,
+        seconds: 4,
       ),
       connectTimeout: const Duration(
-        seconds: 11,
+        seconds: 4,
       ),
       receiveTimeout: const Duration(
-        seconds: 11,
+        seconds: 4,
       ),
     );
     dio = Dio(options);
   }
 
-  Future<List> getItems() async {
-    try {
-      Response response = await dio.get(AppLinks.products);
-      return response.data;
-    } catch (e) {
-      print(e.toString());
-      return [];
-    }
-  }
+  // Future<List> getItems() async {
+  //   try {
+  //     Response response = await dio.get(AppLinks.products);
+  //     return response.data;
+  //   } catch (e) {
+  //     print(e.toString());
+  //     return [];
+  //   }
+  // }
 
   int page = 0;
 
-  Future<List> getMoreItems() async {
+  Future<List?> getMoreItems() async {
     try {
       page++;
       Response response = await dio.get(
           'https://api.unsplash.com/photos?page=$page&client_id=${AppLinks.id}');
-
-      return response.data;
+      return await response.data;
     } catch (e) {
-      print(e.toString());
-      return [];
+      return null;
     }
   }
 }

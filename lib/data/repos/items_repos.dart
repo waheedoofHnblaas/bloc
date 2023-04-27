@@ -7,15 +7,15 @@ class ItemRepo {
 
   ItemRepo(this.itemServices);
 
-  Future<List<ItemModel>> getItems() async {
-    final List items = await itemServices.getItems();
+  // Future<List<ItemModel>> getItems() async {
+  //   final List items = await itemServices.getItems();
+  //
+  //   return items.map((e) => ItemModel.fromJson(e)).toList();
+  // }
 
-    return items.map((e) => ItemModel.fromJson(e)).toList();
-  }
+  Future<List<ItemModel>?> getMoreItems() async {
+    final List? items = await itemServices.getMoreItems();
 
-  Future<List<ItemModel>> getMoreItems() async {
-    final List items = await itemServices.getMoreItems();
-
-    return items.map((e) => ItemModel.fromJson(e)).toList();
+    return items?.map((e) => ItemModel.fromJson(e)).toList();
   }
 }

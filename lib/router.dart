@@ -1,9 +1,10 @@
-import 'package:bloc_app/besniees_logic/cubit/items_cubit.dart';
+import 'package:bloc_app/besniees_logic/cubit/items/items_cubit.dart';
 import 'package:bloc_app/core/routs.dart';
 import 'package:bloc_app/data/repos/items_repos.dart';
 import 'package:bloc_app/data/services/item_services.dart';
 import 'package:bloc_app/persintaion/views/card_page.dart';
 import 'package:bloc_app/persintaion/views/home_page.dart';
+import 'package:bloc_app/persintaion/views/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -26,6 +27,10 @@ class AppRouter {
       case AppPages.cardScreen:
         return MaterialPageRoute(
           builder: (_)=> const CardPage()
+        );
+      case AppPages.settingsScreen:
+        return MaterialPageRoute(
+          builder: (_)=> const SettingsPage()
         );
       default:
         return MaterialPageRoute(

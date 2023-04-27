@@ -1,9 +1,11 @@
-import 'package:bloc_app/besniees_logic/cubit/items_cubit.dart';
+import 'package:bloc_app/besniees_logic/cubit/card/card_cubit.dart';
+import 'package:bloc_app/besniees_logic/cubit/items/items_cubit.dart';
 import 'package:bloc_app/core/colors.dart';
 import 'package:bloc_app/persintaion/widgets/item_card_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import '../../besniees_logic/bloc/internet_bloc/internet_bloc.dart';
 import '../../core/routs.dart';
 import '../../data/model/ItemModel.dart';
 import '../widgets/checkInternet.dart';
@@ -24,6 +26,15 @@ class _HomePageState extends State<HomePage> {
 
   Widget buildSearchTextField() {
     return TextFormField(
+      style: TextStyle(color: AppColors.myTextColor),
+      textAlign: TextAlign.center,
+      decoration: InputDecoration(
+        contentPadding: EdgeInsets.symmetric(horizontal: 10),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(20)),
+          borderSide: BorderSide(color: Colors.green),
+        ),
+      ),
       controller: _searchTextEditController,
       autofocus: true,
       onChanged: (chars) {
@@ -33,7 +44,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   buildAppBarTitle() {
-    return const Text('BLoC');
+    return const Text('BLoc Images');
   }
 
   void addItemsToSearchList(String chars) {
@@ -58,15 +69,15 @@ class _HomePageState extends State<HomePage> {
       ];
     } else {
       return [
-        // IconButton(
-        //   onPressed: () {
-        //     context.read<ThemeCubit>().changeTheme();
-        //   },
-        //   icon: const Icon(Icons.sunny_snowing),
-        // ),
         IconButton(
           onPressed: startSearch,
           icon: const Icon(Icons.search),
+        ),
+        IconButton(
+          onPressed: () {
+            Navigator.pushNamed(context, AppPages.settingsScreen);
+          },
+          icon: const Icon(Icons.settings),
         ),
       ];
     }
@@ -121,26 +132,60 @@ class _HomePageState extends State<HomePage> {
         if (state is ItemsLoadedState) {
           allItems = (state).items;
           return listWidget();
-        } else {
+        } else if (state is ItemsLoadingState) {
           return loadingWidget();
+        } else if (state is ErrorState) {
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                state.message,
+                style: const TextStyle(
+                  color: AppColors.myRed,
+                  fontSize: 18,
+                ),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              ElevatedButton(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(AppColors.myRed),
+                ),
+                onPressed: () async {
+                  await BlocProvider.of<ItemsCubit>(context).getItemsList();
+                },
+                child: const Text('Try Again'),
+              ),
+            ],
+          );
+        } else {
+          return Container();
         }
       },
     );
   }
 
   Widget listWidget() {
-    return SingleChildScrollView(
-      controller: scrollController,
-      child: Column(
-        children: [
-          gridBuilder(),
-          isSearching
-              ? const Text('No Data Yet')
-              : const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: CircularProgressIndicator(),
-                )
-        ],
+    return RefreshIndicator(
+      color: AppColors.myRed,
+      backgroundColor: AppColors.myWhite,
+      onRefresh: () async {
+        await BlocProvider.of<ItemsCubit>(context).getItemsList();
+      },
+      child: SingleChildScrollView(
+        controller: scrollController,
+        child: Column(
+          children: [
+            gridBuilder(),
+            allItems.isNotEmpty && !isSearching
+                ? const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: CircularProgressIndicator(),
+                  )
+                : Container()
+          ],
+        ),
       ),
     );
   }
@@ -156,20 +201,17 @@ class _HomePageState extends State<HomePage> {
       itemCount: isSearching ? searchedItems.length : allItems.length,
       physics: const ClampingScrollPhysics(),
       itemBuilder: (context, index) {
-        if (index <= allItems.length - 1) {
-          return ItemCardWidget(
-            itemModel: isSearching ? searchedItems[index] : allItems[index],
-          );
-        } else {
-          return const CircularProgressIndicator();
-        }
+        return ItemCardWidget(
+          itemModel: isSearching ? searchedItems[index] : allItems[index],
+        );
+        if (index <= allItems.length - 1) {}
       },
     );
   }
 
   Widget loadingWidget() {
     return const Center(
-      child: CircularProgressIndicator(color: AppColors.myRed),
+      child: CircularProgressIndicator(),
     );
   }
 
@@ -185,37 +227,76 @@ class _HomePageState extends State<HomePage> {
               AppPages.cardScreen,
             );
           },
-          child: const Icon(Icons.luggage),
+          child: Column(
+            children: [
+              const Icon(Icons.luggage),
+              BlocBuilder<CardCubit, CardState>(
+                builder: (context, state) {
+                  if (state is AppCardState) {
+                    return Text(state.items.length.toString());
+                  } else {
+                    return Text('0');
+                  }
+                },
+              ),
+            ],
+          ),
         ),
       ],
     );
+  }
+
+  leading() {
+    return isSearching
+        ? IconButton(
+            onPressed: () {
+              stopSearch();
+            },
+            icon: const Icon(Icons.arrow_back_ios))
+        : Container();
+  }
+
+  title() {
+    return isSearching ? buildSearchTextField() : buildAppBarTitle();
+  }
+
+  appBar() {
+    return AppBar(
+      automaticallyImplyLeading: false,
+      leading: leading(),
+      title: title(),
+      actions: buildAppBarActions(),
+    );
+  }
+
+  Future<bool> alterExitApp() {
+    if (Get.isSnackbarOpen) {
+      return Future.value(true);
+    } else {
+      Get.showSnackbar(
+        GetSnackBar(
+          message: 'Exit ? click again',
+          duration: const Duration(seconds: 2),
+          onTap: (snack) {
+            print(snack.snackbarStatus);
+          },
+        ),
+      );
+      return Future.value(false);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: floatingWidgets(),
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        leading: isSearching
-            ? IconButton(
-                onPressed: () {
-                  stopSearch();
-                },
-                icon: const Icon(Icons.arrow_back_ios))
-            : Container(),
-        title: isSearching ? buildSearchTextField() : buildAppBarTitle(),
-        actions: buildAppBarActions(),
-      ),
-      body: Center(
-        child: Stack(
-          children: [
-            buildItemsList(),
-            const CheckInternetWidget()
-          ],
+      appBar: appBar(),
+      body: WillPopScope(
+        onWillPop: alterExitApp,
+        child: CheckNetworkHandelWidget(
+          widget: buildItemsList(),
         ),
       ),
     );
   }
 }
-

@@ -67,13 +67,20 @@ class ItemCardWidget extends StatelessWidget {
                       child: IconButton(
                         onPressed: () {
                           context.read<CardCubit>().addItem(itemModel);
-                          Get.showSnackbar(const GetSnackBar(
-                            snackPosition: SnackPosition.TOP,
 
-                            backgroundColor: AppColors.myRed,
-                            message: 'Add Item',
-                            duration: Duration(seconds: 1),
-                          ));
+                          // Get.showSnackbar(
+                          //   GetSnackBar(
+                          //     snackbarStatus: (status) {
+                          //       if (status == SnackbarStatus.CLOSED) {
+                          //         Get.closeAllSnackbars();
+                          //       } else {}
+                          //     },
+                          //     snackPosition: SnackPosition.TOP,
+                          //     backgroundColor: AppColors.myRed,
+                          //     message: 'Add Item',
+                          //     duration: const Duration(milliseconds: 900),
+                          //   ),
+                          // );
                         },
                         icon:
                             const Icon(Icons.add, color: AppColors.myTextColor),

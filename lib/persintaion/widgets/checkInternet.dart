@@ -1,40 +1,45 @@
+import 'package:bloc_app/core/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../besniees_logic/bloc/internet_bloc.dart';
-import '../../besniees_logic/cubit/items_cubit.dart';
-import '../../core/colors.dart';
 
-class CheckInternetWidget extends StatelessWidget {
-  const CheckInternetWidget({
-    Key? key,
-  }) : super(key: key);
+import '../../besniees_logic/bloc/internet_bloc/internet_bloc.dart';
+import '../../besniees_logic/cubit/items/items_cubit.dart';
+
+class CheckNetworkHandelWidget extends StatelessWidget {
+  CheckNetworkHandelWidget({Key? key, required this.widget}) : super(key: key);
+
+  Widget widget;
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<InternetBloc, InternetState>(
-      builder: (context, state) {
+    return BlocConsumer<InternetBloc, InternetState>(
+      listener: (context, state) {
         if (state is NotConnectState) {
-          return Positioned(
-            top: 0,
-            left: 10,
-            right: 10,
-            child: Card(
-              color: AppColors.myRed,
-              child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(state.message,
-                        style: const TextStyle(color: AppColors.myWhite)),
-                  )),
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: AppColors.myRed,
             ),
           );
         } else {
-          if (
-          BlocProvider.of<ItemsCubit>(context).items.isEmpty) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Connection'),
+              duration: Duration(seconds: 3),
+              backgroundColor: Colors.green,
+            ),
+          );
+          if (BlocProvider.of<ItemsCubit>(context).items.isEmpty) {
             BlocProvider.of<ItemsCubit>(context).getMoreItemsList();
           }
-          return const SizedBox();
         }
+      },
+      builder: (context, state) {
+        return Center(
+          child: Stack(
+            children: [widget],
+          ),
+        );
       },
     );
   }

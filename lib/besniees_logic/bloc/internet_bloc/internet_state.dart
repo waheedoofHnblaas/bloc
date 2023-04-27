@@ -1,4 +1,4 @@
-part of 'internet_bloc.dart';
+part of '../internet_bloc/internet_bloc.dart';
 
 @immutable
 abstract class InternetState {}
