@@ -1,15 +1,12 @@
 import 'package:bloc_app/besniees_logic/cubit/card/card_cubit.dart';
-import 'package:bloc_app/besniees_logic/cubit/card/card_cubit.dart';
-import 'package:bloc_app/besniees_logic/cubit/download_cubit.dart';
-import 'package:bloc_app/besniees_logic/cubit/items/items_cubit.dart';
 import 'package:bloc_app/core/colors.dart';
 import 'package:bloc_app/data/model/ItemModel.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:gallery_saver/gallery_saver.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import '../../besniees_logic/cubit/download/download_cubit.dart';
 
 class CardPage extends StatelessWidget {
   const CardPage({Key? key}) : super(key: key);
